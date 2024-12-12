@@ -1,0 +1,102 @@
+
+/* إضافة تأثير الحركة للنافذة */
+@keyframes slideUp {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.chat-window {
+    animation: slideUp 0.5s ease;
+    z-index: 9999; /* لضمان ظهور النافذة فوق العناصر الأخرى */
+}
+
+/* تحريك النافذة حسب مكانها */
+.top-left {
+    top: 0;
+    left: 0;
+}
+
+.top-right {
+    top: 0;
+    right: 0;
+}
+
+.bottom-left {
+    bottom: 0;
+    left: 0;
+}
+
+.bottom-right {
+    bottom: 0;
+    right: 0;
+}
+
+/* قائمة الإيموجي */
+.emoji-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    position: absolute;
+    bottom: 80px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+.emoji-btn {
+    background: none;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.emoji-btn:hover {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+/* تخصيص للنصوص المزخرفة */
+#textStylePicker {
+    position: absolute;
+    bottom: 150px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+.emoji-btn {
+    font-size: 20px;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.emoji-btn:hover {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+ /* نافذة الإعدادات */
+ .settings-modal {
+    position: fixed;
+    top: 100px;
+    left: 200px;
+    right: 0;
+    bottom: 0;
+    
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}

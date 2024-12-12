@@ -1,0 +1,28 @@
+
+.clints{
+    display: flex;
+    margin: 25px 0 25px 25px ;
+    border-bottom:  1px solid rgb(152, 187, 120);
+}
+.clints img{
+    clip-path: circle();
+    width: 20%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+.clinet .clints .connect{
+    width: 3%;
+    background-color: green;
+    clip-path: circle();
+    position: relative;
+    left: 15%;
+    top: 25px;
+    z-index: 2;
+    
+}
+.clinet .text, .rom .text{
+
+    margin: 15px  10px 0 10px;
+    position: relative;
+    top: 1px;
+}

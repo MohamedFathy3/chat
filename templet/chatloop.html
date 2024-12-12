@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دردشة بسيطة</title>
+    <meta http-equiv="refresh" content="15">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- إضافة Bootstrap Icons -->
+     <link rel="stylesheet" href="{% static 'chat/css/stylechat.css' %}">
+<!-- bakend -->
+
+
+<!-- endbakend -->
+    <style>
+
+   
+        /* وضع ليلي */
+        body.night-mode {
+            background-color: #2b2a2a;
+            color: #0c0c0c;
+        }
+        body.night-mode .chat-container,
+        body.night-mode .people-list {
+            background-color: #444;
+            border-color: #ffffff;
+        }
+        body.night-mode .chat-box {
+            background-color: #555;
+            border-color: #666;
+        }
+        body.night-mode .message.user .text {
+            background-color: #00a344;
+        }
+        body.night-mode .message.other .text {
+            background-color: #888;
+        }
+        body.night-mode .input-area input {
+            background-color: #555;
+            border-color: #666;
+            color: #fff;
+        }
+        body.night-mode .input-area button,
+        body.night-mode .record-btn {
+            background-color: #e6431e;
+            color: #fff;
+        }
+
+        /* إخفاء وظهور قائمة الإيموجيات */
+        .emoji-picker, .decorated-words {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            width: 200px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .emoji-picker span, .decorated-words span {
+            font-size: 20px;
+            cursor: pointer;
+            margin: 5px;
+            display: block;
+        }
+
+        .emoji-picker span:hover, .decorated-words span:hover {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+       a{
+        text-decoration: none;
+       }
+        .message {
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .message strong {
+            color: #007bff;
+        }
+
+        .message img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .message small {
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+
+        /* تخصيص الرسالة المرسلة من الزائر */
+        .guest-message {
+            background-color: #d1e7dd;
+            border-left: 4px solid #28a745;
+        }
+
+        /* تخصيص الرسالة المرسلة من العضو */
+        .customer-message {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        #messages {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input textarea {
+            width: 80%;
+            border-radius: 10px;
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        .chat-input button {
+            width: 15%;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+      
+        
+        
+
+      
+        /* تنسيق تنبيه الرسائل */
+        .alert-custom {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            width: 300px;
+        }
+
+        .alert-custom .alert {
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+             /* نافذة الإعدادات */
+             .settings-modal {
+            position: fixed;
+            top: 100px;
+            left: 200px;
+            right: 0;
+            bottom: 0;
+            
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .settings-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+           
+         
+        }
+        .siteng-body{
+            width: 100%;
+            height: 500px; 
+            overflow-y: scroll;
+        }
+        .siteng-body::-webkit-scrollbar{
+            width: 0;
+            background-color: transparent;
+        }
+        .siteng-body::-webkit-scrollbar-thumb{
+            width: 0;
+            background-color: transparent;
+        }
+
+        .settings-content h5 {
+            margin-bottom: 20px;
+        }
+
+        .settings-content button {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* نمط إضافي للمداخل */
+        .input-field {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* تخصيص نمط النصوص بعد حفظ الإعدادات */
+        .custom-name {
+            font-weight: bold;
+        }
+        .custom-status {
+            font-style: italic;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .message.user {
+            background-color: #e0e0e0;
+        }
+
+        .message.admin {
+            background-color: #d0f0c0;
+        }
+
+        /* تنسيق زر الحفظ */
+        #saveSettingsButton {
+            margin-top: 10px;
+        }
+            /* إعدادات الشريط المتحرك */
+            .marquee {
+            width: 100%; /* عرض الشريط */
+            overflow: hidden; /* إخفاء النص عند تجاوزه حدود الشريط */
+            background-color: #f8f9fa; /* خلفية الشريط */
+            padding: 10px 0; /* تباعد النص عن حدود الشريط */
+            box-sizing: border-box;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            white-space: nowrap; /* منع النص من الانكسار إلى أكثر من سطر */
+            animation: moveText 10s linear infinite; /* تعيين الحركة */
+            font-size: 18px; /* حجم الخط */
+            color: #007bff; /* لون النص */
+            font-weight: bold; /* جعل النص عريض */
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            padding: 20px;
+        }
+
+        .members-list {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .members-list h3 {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 30px;
+            color: #007bff;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease-in-out;
+            font-size: 18px;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .member-item:hover {
+            background-color: #f1f1f1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            cursor: pointer;
+        }
+
+        .member-item .icon {
+            margin-left: 10px;
+            font-size: 22px;
+        }
+
+        .superuser-item {
+            background: linear-gradient(135deg, #ff4b5c, #f07167);
+            color: white;
+            font-weight: bold;
+        }
+
+        .regular-member {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+        }
+
+        .ghost-member {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .hidden-member {
+            background-color: #ffc107;
+            color: white;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        /* تفاعل مع الأزرار */
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-action:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-action .icon {
+            margin-left: 8px;
+        }
+
+        /* تعيين الحركة للنص */
+        @keyframes moveText {
+            0% {
+                transform: translateX(100%); /* بدء الحركة من اليمين */
+            }
+            100% {
+                transform: translateX(-100%); /* النهاية إلى اليسار */
+            }
+        }
+    </style>
+</head>
+<body  style="background-color: {{ style.background_color }};">
+<nav class="bg-dark col-12">
+    <div class="col-12 text-white px-5 py-2">
+        <h6>{{ room.name }}</h6>
+    </div>
+</nav>
+<nav class="bg-light col-12">
+    <div class="marquee col-12">
+        <div class="marquee-text w-100">
+            {{ room.description }}
+        </div>
+    </div>
+</nav>
+<div class="container d-flex flex-row-reverse justify-content-center grid-gap gap-3 my-5" style="background-color: {{ style.background_color }}; font-family: {{ style.font_family }}; font-size: {{ style.font_size }}px; color: {{ style.font_color }};">
+    <!-- قسم الأشخاص المتصلين -->
+    <div class="col-md-3 d-none d-lg-block col-lg-3 p-3 bg-light rounded shadow-sm">
+        <!-- عرض معلومات المستخدم أو الزائر -->
+        <div class="list-unstyled rounded-top-3 pb-3">
+            <li class="d-flex justify-content-between align-items-center py-3 px-4 border-bottom">
+                {% if request.user.is_authenticated %}
+                    <!-- إذا كان المستخدم مسجلاً -->
+                    <div class="d-flex align-items-center">
+                        <img src="{% if customer.avatar %}{{ customer.avatar.url }}{% else %}{{ STATIC_URL }}images/default-avatar.png{% endif %}" alt="Avatar" width="50" class="rounded-circle shadow-sm">
+                        <div class="ms-3">
+                            <p class="text-muted mb-0" style="font-weight: 600;">أنت عضو: <span class="text-dark">{{ request.user.username }}</span></p>
+                            <small class="text-muted">مرحبًا بك في النظام</small>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- إذا كان المستخدم زائرًا -->
+                    {% if guest %}
+                        <div class="d-flex align-items-center">
+                            <img src="{{ customer.avatar.url }}" alt="Avatar" width="50" class="rounded-circle shadow-sm">
+                            <div class="ms-3">
+                                <p class="text-muted mb-0" style="font-weight: 600;">أنت زائر: <span class="text-dark">{{ guest.name }}</span></p>
+                                <small class="text-muted">مرحبًا بك في الموقع</small>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="d-flex align-items-center">
+                            <img src="{{ STATIC_URL }}images/default-avatar.png" alt="Avatar" width="50" class="rounded-circle shadow-sm">
+                            <div class="ms-3">
+                                <p class="text-muted mb-0" style="font-weight: 600;">أنت زائر بدون اسم.</p>
+                                <small class="text-muted">مرحبًا بك في الموقع</small>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </li>
+        </div>
+        
+    
+        <!-- التبويبات -->
+        <ul class="nav nav-tabs d-flex" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="rooms-tab" data-bs-toggle="tab" href="#rooms" role="tab" aria-controls="rooms" aria-selected="true">الغرف</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="users-guests-tab" data-bs-toggle="tab" href="#users-guests" role="tab" aria-controls="users-guests" aria-selected="false">المستخدمين </a>
+            </li>
+        </ul>
+    
+        <div class="tab-content mt-3" id="myTabContent">
+            <!-- عرض الغرف -->
+            <div class="tab-pane fade show active" id="rooms" role="tabpanel" aria-labelledby="rooms-tab">
+                <h5 class="text-primary">الغرف</h5>
+                <ul class="list-unstyled" style="overflow-y: auto; height: 250px;">
+                    {% for room in rooms %}
+                        <li class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="name">{{ room.name }}</span>
+                            <a href="" class="btn btn-info btn-sm">الدخول</a>
+                        </li>
+                    {% empty %}
+                        <li class="text-muted">لا توجد غرف حالياً.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+    
+            <!-- عرض المستخدمين والزوار المتصلين -->
+            <div class="tab-pane fade" id="users-guests" role="tabpanel" aria-labelledby="users-guests-tab">
+                <h5 class="text-primary">المستخدمين والزوار المتصلين</h5>
+                <ul class="list-unstyled " style="overflow-y: auto; height: 250px;">
+                    <!-- عرض المستخدمين المتصلين -->
+                    <ul class="list-group list-group-flush">
+                        {% for member in members %}
+                            {% if member != request.user %}
+                                {% if request.user.is_superuser %}
+                                    <!-- Superuser can see all members -->
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">{{ member.user.username }}</span>
+                                        <div class="col-4 d-flex grid-gap gap-2">
+                                            <a href="{% url 'remove_member_from_room' slug=room.slug member_id=member.id %}" 
+                                class="text-danger" onclick="return confirm('هل أنت متأكد أنك تريد طرد هذا العضو؟');">
+                                 طرد
+                                            </a>
+                                            <a href="{% url 'user_profile' user_id=member.id %}" 
+                           style="font-family: {{ style.font_family }}; font-size: {{ style.font_size }}px; color: {{ style.font_color }};">
+                            <span class="name">
+                                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-user-scan"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 9a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M4 8v-2a2 2 0 0 1 2 -2h2" /><path d="M4 16v2a2 2 0 0 0 2 2h2" /><path d="M16 4h2a2 2 0 0 1 2 2v2" /><path d="M16 20h2a2 2 0 0 0 2 -2v-2" /><path d="M8 16a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2" /></svg>
+                            </span></a>
+                                        </div>   
+                                    </li>
+                                {% elif not member.is_ghost and not member.is_hidden %}
+                                    <!-- Normal users can see only regular members -->
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">{{ member.user.username }}</span>
+                                        <button class="btn btn-sm btn-outline-primary">مراسلة</button>
+                                    </li>
+                                {% elif member.is_ghost and can_see_ghost %}
+                                    <!-- Member can see ghost members -->
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-secondary text-white">
+                                        <span class="fw-bold">{{ member.user.username }}</span>
+                                        <a href="{% url 'user_profile' user_id=member.id %}" 
+                                        style="font-family: {{ style.font_family }}; font-size: {{ style.font_size }}px; color: {{ style.font_color }};">
+                                         <span class="name">
+                                             <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-user-scan"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 9a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M4 8v-2a2 2 0 0 1 2 -2h2" /><path d="M4 16v2a2 2 0 0 0 2 2h2" /><path d="M16 4h2a2 2 0 0 1 2 2v2" /><path d="M16 20h2a2 2 0 0 0 2 -2v-2" /><path d="M8 16a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2" /></svg>
+                                         </span></a>
+                                    </li>
+                                {% elif member.is_hidden and can_see_hidden %}
+                                    <!-- Member can see hidden members -->
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-warning text-dark">
+                                        <span class="fw-bold">{{ member.user.username }}</span>
+                                        <a href="{% url 'user_profile' user_id=member.id %}" 
+                                        style="font-family: {{ style.font_family }}; font-size: {{ style.font_size }}px; color: {{ style.font_color }};">
+                                         <span class="name">
+                                             <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-user-scan"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 9a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M4 8v-2a2 2 0 0 1 2 -2h2" /><path d="M4 16v2a2 2 0 0 0 2 2h2" /><path d="M16 4h2a2 2 0 0 1 2 2v2" /><path d="M16 20h2a2 2 0 0 0 2 -2v-2" /><path d="M8 16a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2" /></svg>
+                                         </span></a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% empty %}
+                            <li class="list-group-item text-center">لا يوجد أعضاء في هذه الغرفة.</li>
+                        {% endfor %}<!--زوار المتصلين -->
+                   
+                        {% for guest in guests %}
+                            <li class="d-flex justify-content-between py-2 border-bottom">
+                                <img src="{% static 'chat/img/1 (6).png' %}" alt="{{ guest.name }}" width="40" class="rounded-circle">
+                                <div class="d-flex justify-content-between w-100 align-items-center">
+                                    <span class="name">{{ guest.name }}</span>
+                                    <span class="status text-warning small">زائر</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                   
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 d-flex flex-column gap-3">
+            <!-- بداية القسم الأول من الأزرار -->
+            <div class="d-flex flex-row gap-3 align-items-center">
+                {% if request.user.is_authenticated %}
+                    <!-- زر الخروج للمستخدم المسجل -->
+                    <a href="{% url 'user_logout' slug=room.slug %}" class="btn btn-danger w-25">خروج</a>
+                
+                {% elif guest %}
+                    <!-- عرض اسم الزائر مع زر الخروج -->
+                    <p class="mb-0">مرحبًا {{ guest.name }}</p>
+                    <a href="{% url 'guest_logout' slug=room.slug %}" class="btn btn-danger w-25">خروج</a>
+                
+                {% else %}
+                    <!-- حالة الزائر بدون اسم -->
+                    <p class="mb-0">أنت زائر بدون اسم.</p>
+                    <a href="{% url 'guest_login' slug=room.slug %}" class="btn btn-primary w-25">تسجيل الدخول كزائر</a>
+                {% endif %}
+                
+                <!-- زر الإعدادات -->
+                <button class="btn btn-info w-50" id="settingsButton">
+                    <i class="bi bi-gear"></i> الإعدادات
+                </button>
+            </div>
+            
+            <!-- زر الإشعارات -->
+            <div class="d-block">
+                <button class="btn btn-warning w-100" id="alertButton">
+                    <i class="bi bi-bell"></i>
+                    {% if notification.id %}
+                        <a href="{% url 'view_notification' notification_id=notification.id %}" class="text-dark text-decoration-none">
+                            عرض الإشعار
+                        </a>
+                    {% else %}
+                        <p class="mb-0">لا توجد إشعارات.</p>
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-9 col-12 h-50 p-4 bg-white rounded shadow-sm ms-3">
+        <!-- رأس الدردشة -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="m-0 text-primary fw-bold">دردشة مباشرة</h5>
+            <button class="btn btn-link text-danger p-0" id="clearButton">مسح الدردشة</button>
+        </div>
+        
+        <!-- صندوق الرسائل -->
+        <div id="messages" class="message-box" style="max-height: 400px; overflow-y: scroll; display: flex; flex-direction: column-reverse;">
+            {% for message in messages %}
+                <div class="message p-3 mb-3 rounded border" style="background-color: {% if message.customer %} #f0f8ff {% else %} #f8f9fa {% endif %};">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong class="text-dark">
+                            {% if message.customer %}
+                                {{ message.customer.user.username }}
+                            {% else %}
+                                {{ message.guest.name }}
+                            {% endif %}
+                        </strong>
+                        <small class="text-muted">{{ message.created_at }}</small>
+                    </div>
+                    <p class="mb-2 text-dark" style="font-size: 1rem;">{{ message.content }}</p>
+                    
+                    {% if message.image %}
+                    <img src="{{ message.image.url }}" alt="صورة مرفقة" width="100px"/>
+                    {% endif %}
+                    {% if message.emoji %}
+                        <span class="emoji" style="font-size: 1.5rem;">{{ message.emoji }}</span>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <p class="mb-0 text-muted small">Likes: {{ message.likes.count }}</p>
+                        
+                        {% if request.user.is_authenticated %}
+                            {% if message.liked_by_user %}
+                                <p class="text-success small">لقد قمت بالإعجاب بهذه الرسالة</p>
+                            {% else %}
+                                <!-- يمكن إضافة هنا زر الإعجاب إذا لم يتم الإعجاب -->
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted">لا توجد رسائل بعد.</p>
+            {% endfor %}
+        </div>
+        <div class="chat-input mt-4">
+            <form method="POST" enctype="multipart/form-data" class="w-100 d-flex grid-gap gap-1 align-items-center px-3">
+                {% csrf_token %}
+             
+                <textarea name="content" class="form-control w-75 " id="messageContent" placeholder="أكتب رسالتك هنا..." ></textarea>
+                <div class="col-3 d-flex grid-gap gap-2">
+                    <div class="col-3">
+                        <label for="imageInput" class="me-1" style="cursor: pointer;">
+                            <i class="bi bi-image" style="font-size: 1.6rem; color: #5f6368;"></i>
+                        </label>
+                        <input type="file" name="image" class="d-none" id="imageInput" >
+                    </div>
+                    <div class="col-3">
+                        <div class="dropdown me-1 w-100">
+                            <button type="button" id="emojiButton" class="btn btn-sm w-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-mood-smile">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/>
+                                    <path d="M9 10l.01 0"/>
+                                    <path d="M15 10l.01 0"/>
+                                    <path d="M9.5 15a3.5 3.5 0 0 0 5 0"/>
+                                </svg>
+                            </button>
+                            <div id="emojiList" class="dropdown-menu p-2" style="display: none;">
+                              
+                                 {% for emoji in  emojis %}
+                                 
+                                <span class="emoji" onclick="insertEmoji('{{ emoji.symbol }}')" style="cursor: pointer;">{{ emoji.symbol }}</span>
+                                 {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="dropdown me-1 w-100">
+                            <button type="button" id="textButton" class="btn btn-sm w-100">
+                                <svg  xmlns="http://www.w3.org/2000/svg" 
+                                 width="24"  height="24"  viewBox="0 0 24 24"  
+                                 fill="none"  stroke="currentColor"  
+                                 stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-letter-t"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 4l12 0" /><path d="M12 4l0 16" /></svg>
+                            </button>
+                            <div id="textList" class="dropdown-menu p-2" style="display: none;">
+                              
+                                 {% for text in  text %}
+                                 
+                                <span class="emoji" onclick="insertText('{{ text.content  }}')" style="cursor: pointer;">{{ text.content  }}</span>
+                                 {% endfor %}
+                            </div>
+                        </div>
+                    </div>    
+                        <div class="col-3">
+                            <button type="submit" class="btn-primary btn-sm w-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-send">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M10 14l11 -11"/>
+                                    <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"/>
+                                </svg>
+                            </button>
+                    </div>
+                </div>
+            </form>
+            
+        </div>
+        
+        
+    </div>
+    
+        <!-- قائمة الإيموجيات -->
+      
+ 
+      <!-- نافذة المحادثة -->
+      <div class="chat-window position-fixed p-3" id="chatWindow" style="display: none; max-width: 350px; width: 100%;">
+        <div class="card shadow-lg">
+
+    <!-- خيارات لتغيير مكان النافذة -->
+    <div class="d-flex justify-content-center">
+        <button class="btn btn-sm" onclick="moveChatWindow('top-left')">
+            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-up-left"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7l10 10" /><path d="M16 7l-9 0l0 9" /></svg>
+        </button>
+        <button class="btn btn-sm" onclick="moveChatWindow('top-right')">
+            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-up-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
+        </button>
+        <button class="btn btn-sm" onclick="moveChatWindow('bottom-left')">
+            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-down-left"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 7l-10 10" /><path d="M16 17l-9 0l0 -9" /></svg>
+        </button>
+        <button class="btn btn-sm" onclick="moveChatWindow('bottom-right')">
+            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-down-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7l10 10" /><path d="M17 8l0 9l-9 0" /></svg>
+        </button>
+    </div>
+    
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>محادثة مع اسم الشخص</span>
+                <button class="btn-close" onclick="closeChatWindow()"></button>
+            </div>
+            <div class="card-body" id="chatBody" style="height: 300px; overflow-y: auto;">
+               
+            <div class="card-footer d-flex grid-gap gap-2">
+                <input type="text" id="messageInput1" class="form-control me-2" placeholder="اكتب رسالة..." />
+                <button class="btn btn-warning btn-sm" onclick="toggleEmojiPicker()">😊</button>
+                <button class="btn btn-secondary btn-sm" onclick="toggleTextStylePicker()">🎨</button>
+                <button class="btn btn-primary btn-sm" onclick="sendMessage()">إرسال</button>
+            </div>
+        </div>
+          <!-- قائمة الإيموجي -->
+    <div id="emojiPicker1" class="emoji-picker" style="display: none;">
+        <button class="emoji-btn btn" onclick="addEmoji('😊')">😊</button>
+        <button class="emoji-btn btn" onclick="addEmoji('😂')">😂</button>
+        <button class="emoji-btn btn" onclick="addEmoji('😍')">😍</button>
+        <button class="emoji-btn btn" onclick="addEmoji('😢')">😢</button>
+        <button class="emoji-btn btn" onclick="addEmoji('😎')">😎</button>
+        <button class="emoji-btn btn" onclick="addEmoji('😡')">😡</button>
+        <!-- يمكنك إضافة المزيد من الإيموجي هنا -->
+    </div>
+    
+    <!-- قائمة النصوص المزخرفة -->
+    <div id="textStylePicker" class="emoji-picker" style="display: none;">
+        <button class="emoji-btn btn" onclick="addDecorativeText('✨ مرحبًا ✨')">✨ مرحبًا ✨</button>
+        <button class="emoji-btn btn" onclick="addDecorativeText('🌟 كيف حالك؟ 🌟')">🌟 كيف حالك؟ 🌟</button>
+        <button class="emoji-btn btn" onclick="addDecorativeText('💖 أحبك 💖')">💖 أحبك 💖</button>
+        <button class="emoji-btn btn" onclick="addDecorativeText('🎉 تهانينا 🎉')">🎉 تهانينا 🎉</button>
+        <!-- يمكنك إضافة المزيد من النصوص المزخرفة هنا -->
+    </div>
+    
+    </div>
+</div>
+</div>
+ <!-- نافذة الإعدادات -->
+<div class="settings-modal" id="settingsModal">
+    <div class="settings-content shadow-lg rounded p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5>الإعدادات</h5>
+            {% if user.is_authenticated %}
+            <div>
+                <a href="javascript:void(0);" onclick="openWindow('{% url 'edit-profile' %}?room_slug={{ room.slug }}')" class="btn btn-primary btn-sm mb-2">تعديل البيانات الشخصية</a>
+                <br>
+                <a href="javascript:void(0);" onclick="openWindow('{% url 'edit-style' %}?room_slug={{ room.slug }}')" class="btn btn-secondary btn-sm">تعديل الأنماط</a>
+            </div>
+            {% else %}
+            <div class="alert alert-warning" role="alert">
+                <h5>لا يوجد لديك صلاحيات</h5>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Modal for Settings -->
+        <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="settingsModalLabel">تخصيص النمط</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>هنا يمكنك تخصيص إعدادات النمط الخاص بك وتعديل المظهر العام للغرفة.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- زر إغلاق الإعدادات -->
+        <button class="btn btn-danger mt-3" id="closeSettingsButton">إغلاق الإعدادات</button>
+    </div>
+</div>
+
+</div>
+
+<!-- تنبيه الرسائل -->
+<div class="alert-custom" id="alertMessage">
+    <div class="alert alert-info" role="alert">
+       <ul>
+    {% for notification in notifications %}
+        <li>
+            <p>لديك رسالة جديدة: {{ notification.message.content }}</p>
+            <a href="{% url 'mark_notification_as_read' notification.id %}">مارك كـ "مقروء"</a>
+        </li>
+    {% endfor %}
+</ul>
+
+    </div>
+</div>
+
+<footer class="bg-light py-3 col-12">
+    <div class="col-11">
+        <div class="row d-flex justify-content-between align-items-center px-5">
+            <div class="col-5">
+               
+        {% if room.imge %}
+        <div class="room-image">
+            <img src="{{ room.imge.url }}" alt="{{ room.name }}" width="300">
+        </div>
+    {% else %}
+        <p>لا توجد صورة للغرفة</p>
+    {% endif %}
+            </div>
+            <div class="col-5 d-flex flex-row-reverse">
+             <img src="{% static 'chat/img/plus.gif' %}" width="80">
+            </div>
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'chat/js/jschat.js' %}"></script>
+<script src="{% static 'chat/js/sitteing.js' %}"></script>
+<script src="{% static 'chat/js/button.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        // إرسال رسالة عند الضغط على زر الإرسال
+        $('#sendButton').click(function() {
+            var message = $('#messageInput').val();
+            if (message.trim() !== '') {
+                var currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                var messageHTML = `
+                    <div class="message user">
+                        <div class="text">${message}</div>
+                        <div class="time">${currentTime}</div>
+                    </div>
+                `;
+                $('#chatBox').append(messageHTML);
+                $('#messageInput').val(''); // مسح المدخل بعد الإرسال
+                $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight); // التمرير لأسفل لإظهار الرسالة الجديدة
+            }
+        });
+
+        // إرسال الرسالة عند الضغط على Enter
+        $('#messageInput').keypress(function(event) {
+            if (event.which === 13) {
+                $('#sendButton').click();
+            }
+        });
+
+        // مسح الدردشة
+        $('#clearButton').click(function() {
+            $('#chatBox').empty();
+        });
+
+        // إظهار قائمة الإيموجيات عند الضغط على زر الإيموجيات
+        $('#emojiButton').click(function() {
+            $('#emojiPicker').toggle();
+            $('#decoratedWordsList').hide(); // إخفاء قائمة الكلمات المزخرفة
+        });
+
+        // إظهار قائمة الكلمات المزخرفة عند الضغط على زر الكلمات المزخرفة
+        $('#decorateButton').click(function() {
+            $('#decoratedWordsList').toggle();
+            $('#emojiPicker').hide(); // إخفاء قائمة الإيموجيات
+        });
+
+        // إضافة الإيموجي إلى النص عند اختياره
+        $('#emojiPicker .emoji').click(function() {
+            var emoji = $(this).data('emoji');
+            $('#messageInput').val($('#messageInput').val() + emoji);
+            $('#emojiPicker').hide(); // إخفاء قائمة الإيموجيات بعد الاختيار
+        });
+
+        // إضافة الكلمة المزخرفة إلى النص عند اختياره
+        $('.decorated-word').click(function() {
+            var decoratedWord = $(this).text();
+            $('#messageInput').val(decoratedWord);
+            $('#decoratedWordsList').hide(); // إخفاء قائمة الكلمات المزخرفة بعد الاختيار
+        });
+
+        // التبديل بين الوضعين
+        $('#toggleModeButton').click(function() {
+            $('body').toggleClass('night-mode');
+            $(this).text($('body').hasClass('night-mode') ? 'الوضع النهاري' : 'الوضع الليلي');
+        });
+        function exitChat() {
+        $('#chatWindow').hide();  // إخفاء نافذة الشات
+        $('#chatBox').empty(); }
+    
+    });
+       // إظهار/إخفاء قائمة الرموز التعبيرية عند الضغط على الزر
+       document.getElementById('emojiButton').addEventListener('click', function () {
+        var emojiList = document.getElementById('emojiList');
+        emojiList.style.display = emojiList.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // إدراج الرمز التعبيري في الـ textarea
+    function insertEmoji(emoji) {
+        var messageContent = document.getElementById('messageContent');
+        var cursorPos = messageContent.selectionStart;
+        var textBefore = messageContent.value.substring(0, cursorPos);
+        var textAfter = messageContent.value.substring(cursorPos, messageContent.value.length);
+        messageContent.value = textBefore + emoji + textAfter;
+        messageContent.focus();
+        messageContent.selectionStart = cursorPos + emoji.length;
+        messageContent.selectionEnd = cursorPos + emoji.length;
+        document.getElementById('emojiList').style.display = 'none';
+    }
+        // إظهار/إخفاء قائمة الرموز التعبيرية عند الضغط على الزر
+        document.getElementById('textButton').addEventListener('click', function () {
+        var textList = document.getElementById('textList');
+        textList.style.display = textList.style.display === 'block' ? 'none' : 'block';
+    });
+     // إدراج الرمز التعبيري في الـ textarea
+     function insertText(text) {
+        var messageContent = document.getElementById('messageContent');
+        var cursorPos = messageContent.selectionStart;
+        var textBefore = messageContent.value.substring(0, cursorPos);
+        var textAfter = messageContent.value.substring(cursorPos, messageContent.value.length);
+        messageContent.value = textBefore + text + textAfter;
+        messageContent.focus();
+        messageContent.selectionStart = cursorPos + text.length;
+        messageContent.selectionEnd = cursorPos + text.length;
+        document.getElementById('textList').style.display = 'none';
+    }
+</script>
+
+<script>
+    // تحميل الرسائل القديمة والجديدة بشكل دوري
+    function loadMessages() {
+        $.get("{% url 'load_messages' slug=room.slug %}", function(data) {
+            var messagesHtml = '';
+
+            // المرور على الرسائل وتهيئة HTML لعرضها
+            data.messages.forEach(function(message) {
+                messagesHtml += '<div class="message">';
+                
+                // إذا كانت الرسالة من عضو
+                if (message.is_customer) {
+                    messagesHtml += '<strong>' + message.sender + ' (عضو):</strong>';
+                } else {  // إذا كانت الرسالة من زائر
+                    messagesHtml += '<strong>' + message.sender + ' (زائر):</strong>';
+                }
+
+                // إضافة محتوى الرسالة
+                messagesHtml += '<p>' + message.content + '</p>';
+
+                // إذا كانت هناك صورة مرفقة، نعرضها
+                if (message.image) {
+                    messagesHtml += '<img src="' + message.image + '" alt="صورة مرفقة" width="100px"/>';
+                }
+
+                // إذا كان هناك رمز تعبيري، نعرضه
+                if (message.emoji) {
+                    messagesHtml += '<span>' + message.emoji + '</span>';
+                }
+
+                // عرض تاريخ إرسال الرسالة
+                messagesHtml += '<br><small>' + message.created_at + '</small></div>';
+            });
+
+            // تحديث المحتوى داخل الحاوية
+            $('#messages').html(messagesHtml);
+
+            // التمرير إلى أسفل الحاوية ليشاهد المستخدم الرسائل الجديدة
+            $('#messages').scrollTop($('#messages')[0].scrollHeight);
+        });
+    }
+
+    // التحديث بشكل دوري كل 5 ثواني (يمكنك تغيير هذه القيمة حسب الحاجة)
+    setInterval(loadMessages, 5000);  // جلب الرسائل الجديدة كل 5 ثواني
+</script>
+
+
+
+<script>
+    // دالة لجلب الرسائل الجديدة كل 5 ثواني
+    function loadNewMessages() {
+        // جلب الرسائل الجديدة من السيرفر (يجب أن تضمن API لهذا الغرض)
+        fetch('/path-to-fetch-new-messages') // استبدل هذا المسار بـ API الفعلي الذي يرسل الرسائل الجديدة
+            .then(response => response.json())
+            .then(data => {
+                const messagesContainer = document.getElementById('messages');
+                // إذا كان هناك رسائل جديدة، أضفها إلى الحاوية
+                if (data.messages && data.messages.length) {
+                    data.messages.forEach(message => {
+                        const messageElement = document.createElement('div');
+                        messageElement.classList.add('message');
+                        messageElement.innerHTML = `
+                            <strong>${message.user}</strong>
+                            <p>${message.content}</p>
+                            ${message.image ? `<img src="${message.image}" alt="صورة مرفقة" />` : ''}
+                            <small>${message.created_at}</small>
+                        `;
+                        messagesContainer.insertAdjacentElement('afterbegin', messageElement);
+                    });
+                    scrollToBottom();  // التمرير للأسفل بعد إضافة الرسائل الجديدة
+                }
+            })
+            .catch(error => console.error('Error loading new messages:', error));
+    }
+
+    // التمرير للأسفل بعد تحديث الرسائل
+    function scrollToBottom() {
+        const messagesContainer = document.getElementById('messages');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;  // التمرير إلى أسفل الحاوية
+    }
+
+    // تشغيل التحديث الدوري للرسائل كل 5 ثواني
+    setInterval(loadNewMessages, 5000); // جلب الرسائل الجديدة كل 5 ثواني
+</script>
+
+<script>
+    function openWindow(url) {
+        // تحديد عرض وارتفاع النافذة الجديدة
+        window.open(url, 'popupWindow', 'width=800,height=600,scrollbars=yes,resizable=yes');
+    }
+</script>
+
+</body>
+
+</html>

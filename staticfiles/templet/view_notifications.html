@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- في صفحة الإشعارات (view_notifications.html) -->
+{% for notification in notifications %}
+    <div class="notification">
+        <p>{{ notification.message }}</p>
+        <p><small>تم إرسالها في {{ notification.created_at }}</small></p>
+        <a href="{% url 'mark_as_read' notification.id %}">تمت القراءة</a>
+    </div>
+{% empty %}
+    <p>لا توجد إشعارات جديدة</p>
+{% endfor %}
+
+</body>
+</html>

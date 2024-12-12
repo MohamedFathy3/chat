@@ -1,0 +1,106 @@
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل ملفك الشخصي</title>
+    <!-- ربط ملف CSS الخاص بـ Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJr+LrS9b5t4FfJtDeVxRfG1zSsczDZbwznpLOtlrpJ2Vx1iZpgj8pFfv7S9" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f4f7fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background: linear-gradient(to right, #007bff, #00c6ff);
+            color: #ffffff;
+            border-radius: 10px 10px 0 0;
+        }
+        .card-body {
+            padding: 30px;
+        }
+        h4 {
+            font-weight: bold;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #ced4da;
+            font-size: 1rem;
+            box-shadow: none;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(38, 143, 255, 0.5);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .alert {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .profile-img-preview {
+            border-radius: 50%;
+            max-width: 150px;
+            margin-bottom: 20px;
+            border: 2px solid #007bff;
+        }
+        .mb-3 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header text-center">
+                        <h4>تعديل ملفك الشخصي</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                           
+                            
+                            <!-- صورة الملف الشخصي -->
+                            {% bootstrap_form form %}
+
+                            <!-- زر الحفظ -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ربط ملف JS الخاص بـ Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gyb6P10V8vYc0LdkpQ2I39s8XfYhRfOmVr4xP2D7pv5xPz04j6S" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eynvXx03njh6wI4t2vReCkYmlgyyVZilPjoO3ssR7PTp1yX6tP19z3f" crossorigin="anonymous

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إرسال رسالة إلى {{ receiver.user.username }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2>الملف الشخصي للمستخدم: {{ liked_profile.user.username }}</h2>
+
+        {% if direct_messages %}
+        <div id="direct-messages-container">
+            {% for message in direct_messages %}
+                <div class="direct-message">
+                    <!-- تحقق إذا كان المرسل هو Customer أو Guest -->
+                    {% if message.sender %}
+                        <strong>{{ message.sender.user.username }}:</strong>
+                    {% else %}
+                        <strong>{{ message.guest_sender.name }}:</strong>
+                    {% endif %}
+                    <span>{{ message.content }}</span>
+                    <p><small>{{ message.created_at }}</small></p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>لا توجد رسائل حالياً.</p>
+    {% endif %}
+    
+    
+    
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="content" placeholder="أكتب رسالتك هنا..."></textarea>
+            <button type="submit">إرسال</button>
+        </form>
+    
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+</html>

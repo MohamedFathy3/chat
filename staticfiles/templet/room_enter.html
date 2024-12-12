@@ -1,0 +1,21 @@
+<!-- room_enter.html -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختيار الدخول</title>
+</head>
+<body>
+    <h1>اختر طريقة الدخول إلى الغرفة: {{ room.name }}</h1>
+
+    <form method="get" action="{% url 'guest_login' room.slug %}">
+        <button type="submit">الدخول كزائر</button>
+    </form>
+    
+    <form method="get" action="{% url 'user_login' room.slug %}">
+        <button type="submit">الدخول كعضو</button>
+    </form>
+    
+</body>
+</html>

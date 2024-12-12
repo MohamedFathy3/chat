@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>صندوق الوارد</h2>
+
+    {% for message in messages %}
+    <div class="message">
+        <p>{{ message.sender.user.username }}: {{ message.content }}</p>
+        <a href="{% url 'reply_message' receiver_id=message.sender.id message_id=message.id %}">رد</a>
+    </div>
+{% endfor %}
+
+{% for notification in notifications %}
+    <div class="notification">
+        <p>{{ notification.message }}</p>
+        <a href="{% url 'view_notification' notification.id %}">عرض الإشعار</a>
+    </div>
+{% endfor %}
+
+
+</ul>
+</body>
+</html>
